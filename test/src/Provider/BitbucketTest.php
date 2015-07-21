@@ -9,9 +9,9 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->provider = new \Stevenmaguire\OAuth2\Client\Provider\Bitbucket([
-            'clientId' => 'f7RDC2StfmDemCEMBx',
-            'clientSecret' => 'SuYcwDfV7KjsXJ4XY5wpqhETAK85rg5C',
-            'redirectUri' => 'http://localhost:8000',
+            'clientId' => 'mock_client_id',
+            'clientSecret' => 'mock_client_secret',
+            'redirectUri' => 'redirect_url',
         ]);
     }
 
