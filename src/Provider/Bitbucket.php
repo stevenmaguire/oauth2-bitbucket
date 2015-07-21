@@ -24,16 +24,6 @@ class Bitbucket extends AbstractProvider
     }
 
     /**
-     * Returns the method to use when requesting an access token.
-     *
-     * @return string HTTP method
-     */
-    protected function getAccessTokenMethod()
-    {
-        return self::METHOD_GET;
-    }
-
-    /**
      * Get authorization url to begin OAuth flow
      *
      * @return string
