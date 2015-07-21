@@ -17,4 +17,34 @@ class BitbucketResourceOwner extends GenericResourceOwner
     {
         return $this->resourceOwnerId;
     }
+
+    /**
+     * Get resource owner name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->response['display_name'] ?: null;
+    }
+
+    /**
+     * Get resource owner username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->response['username'] ?: null;
+    }
+
+    /**
+     * Get resource owner location
+     *
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->response['location'] ?: null;
+    }
 }

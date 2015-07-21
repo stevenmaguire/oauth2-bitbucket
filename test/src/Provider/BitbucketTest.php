@@ -86,13 +86,16 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
     public function testUserData()
     {
         $userId = rand(1000,9999);
+        $name = uniqid();
+        $username = uniqid();
+        $location = uniqid();
 
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
         $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","scopes": "account","expires_in": 3600,"refresh_token": "mock_refresh_token","token_type": "bearer"}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $userResponse->shouldReceive('getBody')->andReturn('{"created_on": "2011-12-20T16:34:07.132459+00:00","display_name": "tutorials account","location": "Santa Monica, CA","type": "user","username": "tutorials","uuid": "'.$userId.'","website": "https://tutorials.bitbucket.org/"}');
+        $userResponse->shouldReceive('getBody')->andReturn('{"created_on": "2011-12-20T16:34:07.132459+00:00","display_name": "'.$name.'","location": "'.$location.'","type": "user","username": "'.$username.'","uuid": "'.$userId.'","website": "https://tutorials.bitbucket.org/"}');
         $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
@@ -105,6 +108,9 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
         $user = $this->provider->getResourceOwner($token);
 
         $this->assertEquals($userId, $user->getId());
+        $this->assertEquals($name, $user->getName());
+        $this->assertEquals($username, $user->getUsername());
+        $this->assertEquals($location, $user->getLocation());
     }
 
     /**
