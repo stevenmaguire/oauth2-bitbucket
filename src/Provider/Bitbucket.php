@@ -94,4 +94,19 @@ class Bitbucket extends AbstractProvider
     {
         return new BitbucketResourceOwner($response, $response['uuid']);
     }
+
+    /**
+     * Builds request options used for requesting an access token.
+     *
+     * @param  array $params
+     * @return array
+     */
+    protected function getAccessTokenOptions(array $params)
+    {
+        $options = parent::getAccessTokenOptions($params);
+
+        $options['auth'] = [$this->clientId, $this->clientSecret];
+
+        return $options;
+    }
 }
