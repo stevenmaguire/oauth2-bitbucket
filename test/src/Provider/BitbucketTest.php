@@ -67,7 +67,7 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
     public function testGetAccessToken()
     {
         $response = m::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","refresh_token":"mock_refresh_token","expires_in": 3600}');
+        $response->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","scopes": "account","expires_in": 3600,"refresh_token": "mock_refresh_token","token_type": "bearer"}');
         $response->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
@@ -88,7 +88,7 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
         $userId = rand(1000,9999);
 
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","refresh_token":"mock_refresh_token","expires_in": 3600}');
+        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","scopes": "account","expires_in": 3600,"refresh_token": "mock_refresh_token","token_type": "bearer"}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
@@ -114,12 +114,13 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
     public function testUserDataFails()
     {
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","expires_in": 3600,"restricted_to": [],"token_type": "bearer","refresh_token": "mock_refresh_token"}');
+        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","scopes": "account","expires_in": 3600,"refresh_token": "mock_refresh_token","token_type": "bearer"}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $userResponse->shouldReceive('getBody')->andReturn('{"type": "error","status": 409,"code": "conflict","context_info": {"errors": [{"reason": "invalid_parameter","name": "group_tag_name","message": "Invalid value \'All Bitbucket \'. A resource with value \'All Bitbucket \' already exists"}]},"help_url": "http://developers.bitbucket.com/docs/#errors","message": "Resource with the same name already exists","request_id": "2132632057555f584de87b7"}');
+        $userResponse->shouldReceive('getBody')->andReturn('{"error":"mock_error","error_description": "mock_error_description"}');
         $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+        $userResponse->shouldReceive('getStatusCode')->andReturn(500);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
         $client->shouldReceive('send')

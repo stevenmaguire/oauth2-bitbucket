@@ -96,17 +96,17 @@ class Bitbucket extends AbstractProvider
     }
 
     /**
-     * Builds request options used for requesting an access token.
+     * Returns a prepared request for requesting an access token.
      *
-     * @param  array $params
-     * @return array
+     * @param array $params Query string parameters
+     * @return Psr\Http\Message\RequestInterface
      */
-    protected function getAccessTokenOptions(array $params)
+    protected function getAccessTokenRequest(array $params)
     {
-        $options = parent::getAccessTokenOptions($params);
+        $request = parent::getAccessTokenRequest($params);
+        $uri = $request->getUri()
+            ->withUserInfo($this->clientId, $this->clientSecret);
 
-        $options['auth'] = [$this->clientId, $this->clientSecret];
-
-        return $options;
+        return $request->withUri($uri);
     }
 }
