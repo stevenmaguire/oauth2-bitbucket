@@ -108,9 +108,13 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
         $user = $this->provider->getResourceOwner($token);
 
         $this->assertEquals($userId, $user->getId());
+        $this->assertEquals($userId, $user->toArray()['uuid']);
         $this->assertEquals($name, $user->getName());
+        $this->assertEquals($name, $user->toArray()['display_name']);
         $this->assertEquals($username, $user->getUsername());
+        $this->assertEquals($username, $user->toArray()['username']);
         $this->assertEquals($location, $user->getLocation());
+        $this->assertEquals($location, $user->toArray()['location']);
     }
 
     /**

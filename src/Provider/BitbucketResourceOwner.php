@@ -1,27 +1,40 @@
 <?php namespace Stevenmaguire\OAuth2\Client\Provider;
 
-use League\OAuth2\Client\Provider\GenericResourceOwner;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-/**
- * @property array $response
- * @property string $resourceOwnerId
- */
-class BitbucketResourceOwner extends GenericResourceOwner
+class BitbucketResourceOwner implements ResourceOwnerInterface
 {
+    /**
+     * Raw response
+     *
+     * @var array
+     */
+    protected $response;
+
+    /**
+     * Creates new resource owner.
+     *
+     * @param array  $response
+     */
+    public function __construct(array $response = array())
+    {
+        $this->response = $response;
+    }
+
     /**
      * Get resource owner id
      *
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
-        return $this->resourceOwnerId;
+        return $this->response['uuid'] ?: null;
     }
 
     /**
      * Get resource owner name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -31,7 +44,7 @@ class BitbucketResourceOwner extends GenericResourceOwner
     /**
      * Get resource owner username
      *
-     * @return string
+     * @return string|null
      */
     public function getUsername()
     {
@@ -41,10 +54,20 @@ class BitbucketResourceOwner extends GenericResourceOwner
     /**
      * Get resource owner location
      *
-     * @return string
+     * @return string|null
      */
     public function getLocation()
     {
         return $this->response['location'] ?: null;
+    }
+
+    /**
+     * Return all of the owner details available as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->response;
     }
 }
