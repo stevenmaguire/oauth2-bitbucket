@@ -10,6 +10,8 @@ class Bitbucket extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
+    protected $responseError = 'error';
+
     /**
      * Get authorization url to begin OAuth flow
      *
@@ -58,16 +60,38 @@ class Bitbucket extends AbstractProvider
     /**
      * Check a provider response for errors.
      *
-     * @throws IdentityProviderException
-     * @param  ResponseInterface $response
-     * @param  string $data Parsed response data
-     * @return void
+     * @param ResponseInterface $response
+     * @param                   $data
+     *
+     * @return array|bool
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
-        if (isset($data['error'])) {
-            throw new IdentityProviderException($data['error_description'], $response->getStatusCode(), $response);
+        if (isset($data[$this->responseError])) {
+            return array(
+                'message' => $this->_getErrorMessage($data),
+                'code' => $response->getStatusCode(),
+                'reason' => $response->getReasonPhrase()
+            );
         }
+
+        return true;
+    }
+
+    /**
+     * Returns error message depending on structure received
+     *
+     * @param $data
+     *
+     * @return mixed
+     */
+    protected function _getErrorMessage($data)
+    {
+        if (is_array($data[$this->responseError])) {
+            return $data[$this->responseError]['message'];
+        }
+
+        return $data['error_description'];
     }
 
     /**
