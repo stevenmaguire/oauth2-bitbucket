@@ -66,8 +66,33 @@ class Bitbucket extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if (isset($data['error'])) {
-            throw new IdentityProviderException($data['error_description'], $response->getStatusCode(), $response);
+            if (is_array($data['error'])) {
+                $this->_throwException(
+                    $data['error']['message'],
+                    $response->getStatusCode(),
+                    $response
+                );
+            }
+           $this->_throwException(
+               $data['error_description'],
+               $response->getStatusCode(),
+               $response
+           );
         }
+    }
+
+    /**
+     * Abstracted method to throw exceptions
+     *
+     * @param $message
+     * @param $statusCode
+     * @param $response
+     *
+     * @throws IdentityProviderException
+     */
+    protected function _throwException($message, $statusCode, $response)
+    {
+        throw new IdentityProviderException($message, $statusCode, $response);
     }
 
     /**
