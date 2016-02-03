@@ -74,9 +74,9 @@ class Bitbucket extends AbstractProvider
                 );
             }
             $this->throwException(
-               $data['error_description'],
-               $response->getStatusCode(),
-               $response
+                $data['error_description'],
+                $response->getStatusCode(),
+                $response
             );
         }
     }
