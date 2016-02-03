@@ -67,17 +67,17 @@ class Bitbucket extends AbstractProvider
     {
         if (isset($data['error'])) {
             if (is_array($data['error'])) {
-                $this->_throwException(
+                $this->throwException(
                     $data['error']['message'],
                     $response->getStatusCode(),
                     $response
                 );
             }
-           $this->_throwException(
+            $this->throwException(
                $data['error_description'],
                $response->getStatusCode(),
                $response
-           );
+            );
         }
     }
 
@@ -90,7 +90,7 @@ class Bitbucket extends AbstractProvider
      *
      * @throws IdentityProviderException
      */
-    protected function _throwException($message, $statusCode, $response)
+    protected function throwException($message, $statusCode, $response)
     {
         throw new IdentityProviderException($message, $statusCode, $response);
     }
