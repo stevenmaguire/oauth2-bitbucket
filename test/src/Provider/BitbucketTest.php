@@ -117,28 +117,42 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($location, $user->toArray()['location']);
     }
 
-    /**
-     *
-     * @expectedException \League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     */
     public function testUserDataFails()
     {
-        $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","scopes": "account","expires_in": 3600,"refresh_token": "mock_refresh_token","token_type": "bearer"}');
-        $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+        $errorPayloads = [
+            '{"error":"mock_error","error_description": "mock_error_description"}',
+            '{"error":{"message":"mock_error"},"error_description": "mock_error_description"}',
+            '{"foo":"bar"}'
+        ];
 
-        $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $userResponse->shouldReceive('getBody')->andReturn('{"error":"mock_error","error_description": "mock_error_description"}');
-        $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
-        $userResponse->shouldReceive('getStatusCode')->andReturn(500);
+        $testPayload = function ($payload) {
+            $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
+            $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","scopes": "account","expires_in": 3600,"refresh_token": "mock_refresh_token","token_type": "bearer"}');
+            $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
-        $client = m::mock('GuzzleHttp\ClientInterface');
-        $client->shouldReceive('send')
-            ->times(2)
-            ->andReturn($postResponse, $userResponse);
-        $this->provider->setHttpClient($client);
+            $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
+            $userResponse->shouldReceive('getBody')->andReturn($payload);
+            $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+            $userResponse->shouldReceive('getStatusCode')->andReturn(500);
 
-        $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
-        $user = $this->provider->getResourceOwner($token);
+            $client = m::mock('GuzzleHttp\ClientInterface');
+            $client->shouldReceive('send')
+                ->times(2)
+                ->andReturn($postResponse, $userResponse);
+            $this->provider->setHttpClient($client);
+
+            $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
+
+            try {
+                $user = $this->provider->getResourceOwner($token);
+                return false;
+            } catch (\Exception $e) {
+                $this->assertInstanceOf('\League\OAuth2\Client\Provider\Exception\IdentityProviderException', $e);
+            }
+
+            return $payload;
+        };
+
+        $this->assertCount(2, array_filter(array_map($testPayload, $errorPayloads)));
     }
 }
