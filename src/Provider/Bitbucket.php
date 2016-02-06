@@ -3,12 +3,14 @@
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Tool\ArrayAccessorTrait;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
 class Bitbucket extends AbstractProvider
 {
-    use BearerAuthorizationTrait;
+    use ArrayAccessorTrait,
+        BearerAuthorizationTrait;
 
     /**
      * Get authorization url to begin OAuth flow
@@ -65,9 +67,16 @@ class Bitbucket extends AbstractProvider
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
-        if (isset($data['error'])) {
-            throw new IdentityProviderException($data['error_description'], $response->getStatusCode(), $response);
-        }
+        $errors = [
+            'error_description',
+            'error.message',
+        ];
+
+        array_map(function ($error) use ($response, $data) {
+            if ($message = $this->getValueByKey($data, $error)) {
+                throw new IdentityProviderException($message, $response->getStatusCode(), $response);
+            }
+        }, $errors);
     }
 
     /**
