@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `oauth2-bitbucket` will be documented in this file
 
+## 3.0.0 - 2018-05-03
+
+### Added
+- Updated scope separator from comma to space - thanks @GVSO (https://github.com/stevenmaguire/oauth2-bitbucket/pull/7)
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 2.0.0 - 2017-01-25
 
 ### Added
