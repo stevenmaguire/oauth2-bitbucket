@@ -42,7 +42,7 @@ class BitbucketTest extends \PHPUnit_Framework_TestCase
 
     public function testScopes()
     {
-        $scopeSeparator = ',';
+        $scopeSeparator = ' ';
         $options = ['scope' => [uniqid(), uniqid()]];
         $query = ['scope' => implode($scopeSeparator, $options['scope'])];
         $url = $this->provider->getAuthorizationUrl($options);
